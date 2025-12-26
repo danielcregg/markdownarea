@@ -598,12 +598,14 @@
     try {
       mermaid.init(undefined, targets)
     } catch (err) {
-      const diagramSummary = conversions.map(({ pre }, idx) => `#${idx + 1}: ${pre.textContent}`).join(' | ')
+      const diagramSummary = conversions
+        .map(({ pre }, idx) => `#${idx + 1}: ${(pre.textContent ?? '').slice(0, 120)}`)
+        .join(' | ')
       console.error('Mermaid render error:', err, 'Diagrams:', diagramSummary)
       conversions.forEach(({ container, pre }) => {
         const parent = container.parentNode ?? preview
         if (parent) {
-          parent.replaceChild(pre, container)
+          parent.replaceChild(pre.cloneNode(true), container)
         }
       })
     }
