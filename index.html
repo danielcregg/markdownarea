@@ -2284,13 +2284,109 @@ mindmap
 
   // Keyboard shortcuts
   editor.addEventListener('keydown', (e) => {
-    // Tab
+    // Enhanced keyboard handling
+    // 1. Indentation (Tab/Shift+Tab)
     if (e.key === 'Tab') {
       e.preventDefault()
       const start = editor.selectionStart
       const end = editor.selectionEnd
-      editor.value = editor.value.substring(0, start) + '  ' + editor.value.substring(end)
-      editor.selectionStart = editor.selectionEnd = start + 2
+      const value = editor.value
+      const before = value.slice(0, start)
+
+      // Check for multi-line selection
+      const lineStart = value.lastIndexOf('\n', start - 1) + 1
+      const lineEnd = value.indexOf('\n', end)
+      const actualEnd = lineEnd === -1 ? value.length : lineEnd
+      const hasMultiLineSelection = value.slice(lineStart, actualEnd).includes('\n')
+
+      if (hasMultiLineSelection || e.shiftKey) {
+        // Block indent/dedent
+        const lines = value.slice(lineStart, actualEnd).split('\n')
+        const newLines = lines.map(line => {
+          if (e.shiftKey) {
+            return line.startsWith('  ') ? line.slice(2) : line
+          } else {
+            return '  ' + line
+          }
+        })
+        const newValue = value.slice(0, lineStart) + newLines.join('\n') + value.slice(actualEnd)
+        editor.value = newValue
+
+        // Restore selection nicely
+        editor.selectionStart = lineStart
+        editor.selectionEnd = lineStart + newLines.join('\n').length
+      } else {
+        // Single line indent at cursor
+        const newValue = before + '  ' + value.slice(end)
+        editor.value = newValue
+        editor.selectionStart = editor.selectionEnd = start + 2
+      }
+
+      saveToHistory()
+      renderMarkdown()
+    }
+
+    // 2. Auto-closing pairs
+    const pairs = { '(': ')', '[': ']', '{': '}', '"': '"', "'": "'", '`': '`' }
+    if (pairs[e.key] && !e.ctrlKey && !e.metaKey && !e.altKey) {
+      e.preventDefault()
+      const start = editor.selectionStart
+      const end = editor.selectionEnd
+      const value = editor.value
+      const selection = value.slice(start, end)
+
+      let newValue
+      let newCursorPos
+
+      if (selection) {
+        // Wrap selection
+        newValue = value.slice(0, start) + e.key + selection + pairs[e.key] + value.slice(end)
+        newCursorPos = end + 2 // End after the closing pair
+      } else {
+        // Insert pair
+        newValue = value.slice(0, start) + e.key + pairs[e.key] + value.slice(end)
+        newCursorPos = start + 1 // Middle
+      }
+
+      editor.value = newValue
+      editor.selectionStart = editor.selectionEnd = newCursorPos
+      saveToHistory()
+      renderMarkdown()
+    }
+
+    // 3. Smart List Continuation
+    if (e.key === 'Enter') {
+      const start = editor.selectionStart
+      const value = editor.value
+      const lineStart = value.lastIndexOf('\n', start - 1) + 1
+      const currentLine = value.slice(lineStart, start)
+
+      // Match list patterns: "- ", "* ", "1. "
+      const listMatch = currentLine.match(/^(\s*)([*-]|\d+\.)\s+(.*)/)
+
+      if (listMatch) {
+        e.preventDefault()
+        const [_, indent, marker, content] = listMatch
+
+        if (!content.trim()) {
+          // Empty list item - end list (remove marker)
+          const newValue = value.slice(0, lineStart) + value.slice(start)
+          editor.value = newValue
+          editor.selectionStart = editor.selectionEnd = lineStart
+        } else {
+          // Continue list
+          let nextMarker = marker
+          if (/^\d+\.$/.test(marker)) {
+            const num = parseInt(marker)
+            nextMarker = (num + 1) + '.'
+          }
+
+          const insertion = '\n' + indent + nextMarker + ' '
+          insertText(insertion)
+        }
+        saveToHistory()
+        renderMarkdown()
+      }
     }
 
     // Ctrl/Cmd + key shortcuts
