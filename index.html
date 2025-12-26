@@ -82,6 +82,10 @@
     }
   }
 
+  #btn-share {
+    margin-left: auto;
+  }
+
   .container {
     display: flex;
     height: calc(100vh - 42px);
@@ -323,6 +327,7 @@
   <button id="btn-edit" class="active">Edit</button>
   <button id="btn-split">Split</button>
   <button id="btn-preview">Preview</button>
+  <button id="btn-share">📤 Share</button>
 </div>
 
 <div class="container">
@@ -342,6 +347,7 @@
   const btnEdit = document.getElementById('btn-edit')
   const btnSplit = document.getElementById('btn-split')
   const btnPreview = document.getElementById('btn-preview')
+  const btnShare = document.getElementById('btn-share')
 
   // Configure marked
   marked.setOptions({
@@ -364,6 +370,63 @@
   btnEdit.addEventListener('click', () => setView('edit'))
   btnSplit.addEventListener('click', () => setView('split'))
   btnPreview.addEventListener('click', () => setView('preview'))
+
+  // Share button handler
+  btnShare.addEventListener('click', async () => {
+    const url = window.location.href
+    const title = document.title
+
+    // Try Web Share API first (mobile devices)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          text: 'Check out this markdown document',
+          url: url
+        })
+        return
+      } catch (err) {
+        // User cancelled or share failed, fall through to clipboard
+        if (err.name !== 'AbortError') {
+          console.log('Share failed:', err)
+        }
+      }
+    }
+
+    // Fallback to clipboard
+    try {
+      await navigator.clipboard.writeText(url)
+      // Visual feedback
+      const originalText = btnShare.textContent
+      btnShare.textContent = '✓ Copied!'
+      btnShare.style.background = '#2da44e'
+      btnShare.style.borderColor = '#2da44e'
+      setTimeout(() => {
+        btnShare.textContent = originalText
+        btnShare.style.background = ''
+        btnShare.style.borderColor = ''
+      }, 2000)
+    } catch (err) {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea')
+      textarea.value = url
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      try {
+        document.execCommand('copy')
+        const originalText = btnShare.textContent
+        btnShare.textContent = '✓ Copied!'
+        setTimeout(() => {
+          btnShare.textContent = originalText
+        }, 2000)
+      } catch (e) {
+        alert('Failed to copy. Please copy manually: ' + url)
+      }
+      document.body.removeChild(textarea)
+    }
+  })
 
   // Restore view mode
   const savedView = localStorage.getItem('viewMode')
