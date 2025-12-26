@@ -369,7 +369,7 @@
   const btnPreview = document.getElementById('btn-preview')
   const btnShare = document.getElementById('btn-share')
   const formatButtons = document.querySelectorAll('[data-format]')
-  const DEFAULT_LINK_URL = 'https://your-link-here'
+  const DEFAULT_LINK_URL = 'https://example.com'
 
   // Configure marked
   marked.setOptions({
@@ -584,6 +584,8 @@
   }
 
   function applyWrap(prefix, suffix = prefix, placeholder = '') {
+    if (!editor) return
+
     const start = editor.selectionStart
     const end = editor.selectionEnd
     const value = editor.value
