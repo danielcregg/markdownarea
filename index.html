@@ -356,6 +356,7 @@
   const prefersDarkMode = window.matchMedia('(prefers-color-scheme: dark)')
   let mermaidInitialized = false
   let mermaidTheme = 'default'
+  const MERMAID_SUMMARY_MAX = 120
 
   // Configure marked
   marked.setOptions({
@@ -587,19 +588,20 @@
     const conversions = []
     codeBlocks.forEach((code) => {
       const pre = code.parentElement
+      const diagramText = (code.textContent ?? '').trim()
       const container = document.createElement('div')
       container.className = 'mermaid'
-      container.textContent = code.textContent
+      container.textContent = diagramText
       pre.replaceWith(container)
       targets.push(container)
-      conversions.push({ container, pre })
+      conversions.push({ container, pre, text: diagramText })
     })
 
     try {
       mermaid.init(undefined, targets)
     } catch (err) {
       const diagramSummary = conversions
-        .map(({ pre }, idx) => `#${idx + 1}: ${(pre.textContent ?? '').slice(0, 120)}`)
+        .map(({ text }, idx) => `#${idx + 1}: ${text.slice(0, MERMAID_SUMMARY_MAX)}`)
         .join(' | ')
       console.error('Mermaid render error:', err, 'Diagrams:', diagramSummary)
       conversions.forEach(({ container, pre }) => {
