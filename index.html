@@ -956,6 +956,7 @@
     <button id="btn-theme" title="Toggle theme">☀️</button>
   </div>
   <div class="toolbar-group actions">
+    <button id="btn-new" title="New document (opens in new tab)">📄 New</button>
     <button id="btn-download" title="Download .md">💾</button>
     <button id="btn-copy-html" title="Copy as HTML">📋</button>
     <button id="btn-print" title="Print/PDF">🖨️</button>
@@ -1598,6 +1599,24 @@ mindmap
       insertText(codeBlock)
       codeblockModal.classList.remove('active')
     })
+  })
+
+  // New Document button - opens in new tab
+  const btnNew = document.getElementById('btn-new')
+
+  btnNew.addEventListener('click', () => {
+    const confirmed = confirm(
+      '📄 Create New Document\n\n' +
+      'This will open a fresh, blank document in a new tab.\n' +
+      'Your current document will remain open here.\n\n' +
+      'Continue?'
+    )
+
+    if (confirmed) {
+      // Get base URL without hash
+      const baseUrl = window.location.origin + window.location.pathname
+      window.open(baseUrl, '_blank')
+    }
   })
 
   // Fullscreen
