@@ -584,6 +584,7 @@
     }
 
     const targets = []
+    const conversions = []
     codeBlocks.forEach((code) => {
       const pre = code.parentElement
       const container = document.createElement('div')
@@ -591,8 +592,20 @@
       container.textContent = code.textContent
       pre.replaceWith(container)
       targets.push(container)
+      conversions.push({ container, pre })
     })
 
-    mermaid.init(undefined, targets)
+    try {
+      mermaid.init(undefined, targets)
+    } catch (err) {
+      console.error('Mermaid render error:', err)
+      conversions.forEach(({ container, pre }) => {
+        if (container.parentNode) {
+          container.replaceWith(pre)
+        } else {
+          preview.appendChild(pre)
+        }
+      })
+    }
   }
 </script>
