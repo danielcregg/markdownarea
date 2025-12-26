@@ -934,7 +934,7 @@
 <script src="https://cdn.jsdelivr.net/npm/marked@11.1.1/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11.9.0/build/highlight.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 
 <script>
   // DOM Elements
@@ -1165,28 +1165,22 @@
     }, 100)
   })
 
-  // QR Code
-  btnQr.addEventListener('click', async () => {
+  // QR Code using QRious library
+  btnQr.addEventListener('click', () => {
     const url = window.location.href
 
-    // Check if QRCode library is available
-    if (typeof QRCode === 'undefined') {
+    // Check if QRious library is available
+    if (typeof QRious === 'undefined') {
       alert('QR Code library failed to load. Please check your internet connection.')
       return
     }
 
     try {
-      // Clear previous QR code
-      const ctx = qrCanvas.getContext('2d')
-      ctx.clearRect(0, 0, qrCanvas.width, qrCanvas.height)
-
-      await QRCode.toCanvas(qrCanvas, url, {
-        width: 200,
-        margin: 2,
-        color: {
-          dark: '#000000',
-          light: '#ffffff'
-        }
+      new QRious({
+        element: qrCanvas,
+        value: url,
+        size: 200,
+        level: 'M'
       })
       qrModal.classList.add('active')
     } catch (err) {
@@ -1306,8 +1300,22 @@
     return html
   }
 
+  // Auto-detect unfenced Mermaid diagrams
+  function autoWrapMermaid(markdown) {
+    // Common Mermaid diagram keywords at the start of a line
+    const mermaidKeywords = /^(graph\s|flowchart\s|sequenceDiagram|classDiagram|stateDiagram|erDiagram|gantt|pie\s|journey|gitGraph|mindmap|timeline|quadrantChart|xychart|sankey|packet|block)/m
+
+    // If content starts with a mermaid keyword and isn't already fenced
+    const trimmed = markdown.trim()
+    if (mermaidKeywords.test(trimmed) && !trimmed.startsWith('```')) {
+      return '```mermaid\n' + markdown + '\n```'
+    }
+    return markdown
+  }
+
   function renderMarkdown() {
     let markdown = editor.value
+    markdown = autoWrapMermaid(markdown)
     markdown = processEmojis(markdown)
     let html = marked.parse(markdown)
     html = renderMath(html)
