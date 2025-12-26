@@ -876,6 +876,68 @@
     font-size: 12px;
     font-weight: 500;
   }
+
+  /* Code Block Language Selector Modal */
+  .language-selector {
+    max-width: 450px;
+    width: 90%;
+  }
+
+  .language-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .language-option {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 8px;
+    border: 1px solid #d0d7de;
+    background: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  html[data-theme="dark"] .language-option {
+    background: #21262d;
+    border-color: #30363d;
+    color: #c9d1d9;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .language-option {
+      background: #21262d;
+      border-color: #30363d;
+      color: #c9d1d9;
+    }
+  }
+
+  .language-option:hover {
+    background: #f3f4f6;
+    border-color: #0969da;
+    transform: translateY(-2px);
+  }
+
+  html[data-theme="dark"] .language-option:hover {
+    background: #30363d;
+    border-color: #58a6ff;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .language-option:hover {
+      background: #30363d;
+      border-color: #58a6ff;
+    }
+  }
+
+  .lang-name {
+    font-size: 11px;
+    font-weight: 500;
+  }
 </style>
 
 <div class="toolbar">
@@ -977,6 +1039,10 @@
       <span class="icon">📊</span>
       <span class="label">Diagram</span>
     </button>
+    <button id="btn-codeblock" aria-label="Code block" title="Insert code block">
+      <span class="icon">{ }</span>
+      <span class="label">Code</span>
+    </button>
   </div>
   <div class="main-content">
     <div class="editor-preview-container">
@@ -1044,6 +1110,64 @@
       </button>
     </div>
     <button id="close-mermaid">Cancel</button>
+  </div>
+</div>
+
+<!-- Code Block Language Selector Modal -->
+<div class="modal-overlay" id="codeblock-modal">
+  <div class="modal language-selector">
+    <h3>Select Language</h3>
+    <div class="language-grid">
+      <button class="language-option" data-lang="javascript">
+        <span class="lang-name">JavaScript</span>
+      </button>
+      <button class="language-option" data-lang="python">
+        <span class="lang-name">Python</span>
+      </button>
+      <button class="language-option" data-lang="java">
+        <span class="lang-name">Java</span>
+      </button>
+      <button class="language-option" data-lang="csharp">
+        <span class="lang-name">C#</span>
+      </button>
+      <button class="language-option" data-lang="cpp">
+        <span class="lang-name">C++</span>
+      </button>
+      <button class="language-option" data-lang="c">
+        <span class="lang-name">C</span>
+      </button>
+      <button class="language-option" data-lang="typescript">
+        <span class="lang-name">TypeScript</span>
+      </button>
+      <button class="language-option" data-lang="html">
+        <span class="lang-name">HTML</span>
+      </button>
+      <button class="language-option" data-lang="css">
+        <span class="lang-name">CSS</span>
+      </button>
+      <button class="language-option" data-lang="sql">
+        <span class="lang-name">SQL</span>
+      </button>
+      <button class="language-option" data-lang="bash">
+        <span class="lang-name">Bash</span>
+      </button>
+      <button class="language-option" data-lang="json">
+        <span class="lang-name">JSON</span>
+      </button>
+      <button class="language-option" data-lang="ruby">
+        <span class="lang-name">Ruby</span>
+      </button>
+      <button class="language-option" data-lang="go">
+        <span class="lang-name">Go</span>
+      </button>
+      <button class="language-option" data-lang="rust">
+        <span class="lang-name">Rust</span>
+      </button>
+      <button class="language-option" data-lang="php">
+        <span class="lang-name">PHP</span>
+      </button>
+    </div>
+    <button id="close-codeblock">Cancel</button>
   </div>
 </div>
 
@@ -1444,6 +1568,35 @@ mindmap
         insertText('\n' + template + '\n')
         mermaidModal.classList.remove('active')
       }
+    })
+  })
+
+  // Code Block modal elements
+  const codeblockModal = document.getElementById('codeblock-modal')
+  const btnCodeblock = document.getElementById('btn-codeblock')
+  const closeCodeblock = document.getElementById('close-codeblock')
+  const languageOptions = document.querySelectorAll('.language-option')
+
+  btnCodeblock.addEventListener('click', () => {
+    codeblockModal.classList.add('active')
+  })
+
+  closeCodeblock.addEventListener('click', () => {
+    codeblockModal.classList.remove('active')
+  })
+
+  codeblockModal.addEventListener('click', (e) => {
+    if (e.target === codeblockModal) {
+      codeblockModal.classList.remove('active')
+    }
+  })
+
+  languageOptions.forEach(option => {
+    option.addEventListener('click', () => {
+      const lang = option.dataset.lang
+      const codeBlock = '\n```' + lang + '\n// Your code here\n```\n'
+      insertText(codeBlock)
+      codeblockModal.classList.remove('active')
     })
   })
 
