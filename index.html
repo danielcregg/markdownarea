@@ -986,6 +986,115 @@
     font-size: 11px;
     font-weight: 500;
   }
+
+  /* Share Modal */
+  .share-modal {
+    max-width: 500px;
+    width: 90%;
+  }
+
+  .share-options {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .share-option {
+    padding: 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 8px;
+    background: #f6f8fa;
+  }
+
+  html[data-theme="dark"] .share-option {
+    background: #161b22;
+    border-color: #30363d;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .share-option {
+      background: #161b22;
+      border-color: #30363d;
+    }
+  }
+
+  .share-option-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .share-icon {
+    font-size: 24px;
+  }
+
+  .share-option-header strong {
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  .share-option-header small {
+    color: #57606a;
+    font-size: 12px;
+  }
+
+  html[data-theme="dark"] .share-option-header small {
+    color: #8b949e;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .share-option-header small {
+      color: #8b949e;
+    }
+  }
+
+  .share-url-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .share-url-row input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #d0d7de;
+    border-radius: 6px;
+    font-size: 12px;
+    background: #fff;
+    color: inherit;
+  }
+
+  html[data-theme="dark"] .share-url-row input {
+    background: #0d1117;
+    border-color: #30363d;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme]) .share-url-row input {
+      background: #0d1117;
+      border-color: #30363d;
+    }
+  }
+
+  .share-url-row button {
+    padding: 8px 16px;
+    border: none;
+    background: #0969da;
+    color: #fff;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s;
+  }
+
+  .share-url-row button:hover {
+    background: #0759b8;
+  }
+
+  .share-url-row button.copied {
+    background: #2da44e;
+  }
 </style>
 
 <div class="toolbar">
@@ -1010,7 +1119,7 @@
     <button id="btn-copy-html" title="Copy as HTML">📋</button>
     <button id="btn-print" title="Print/PDF">🖨️</button>
     <button id="btn-qr" title="QR Code">📱</button>
-    <button id="btn-share" title="Share URL">📤</button>
+    <button id="btn-share" title="Share options">📤 Share</button>
     <button id="btn-fullscreen" title="Fullscreen (F11)">⛶</button>
   </div>
 </div>
@@ -1217,6 +1326,42 @@
       </button>
     </div>
     <button id="close-codeblock">Cancel</button>
+  </div>
+</div>
+
+<!-- Share Options Modal -->
+<div class="modal-overlay" id="share-modal">
+  <div class="modal share-modal">
+    <h3>📤 Share Document</h3>
+    <div class="share-options">
+      <div class="share-option">
+        <div class="share-option-header">
+          <span class="share-icon">👁️</span>
+          <div>
+            <strong>Preview Link</strong>
+            <small>View-only, clean reading experience</small>
+          </div>
+        </div>
+        <div class="share-url-row">
+          <input type="text" id="preview-url" readonly>
+          <button id="copy-preview-url">Copy</button>
+        </div>
+      </div>
+      <div class="share-option">
+        <div class="share-option-header">
+          <span class="share-icon">✏️</span>
+          <div>
+            <strong>Edit Link</strong>
+            <small>Opens in edit mode for collaboration</small>
+          </div>
+        </div>
+        <div class="share-url-row">
+          <input type="text" id="edit-url" readonly>
+          <button id="copy-edit-url">Copy</button>
+        </div>
+      </div>
+    </div>
+    <button id="close-share">Close</button>
   </div>
 </div>
 
@@ -1721,38 +1866,60 @@ mindmap
     btnFullscreen.textContent = body.classList.contains('fullscreen') ? '⛶' : '⛶'
   })
 
-  // Share button handler
+  // Share Modal
+  const shareModal = document.getElementById('share-modal')
+  const closeShare = document.getElementById('close-share')
+  const previewUrlInput = document.getElementById('preview-url')
+  const editUrlInput = document.getElementById('edit-url')
+  const copyPreviewBtn = document.getElementById('copy-preview-url')
+  const copyEditBtn = document.getElementById('copy-edit-url')
+
   btnShare.addEventListener('click', async () => {
-    const url = window.location.href
-    const title = document.title
+    // Generate URLs
+    const baseUrl = window.location.origin + window.location.pathname
+    const hash = await get()
 
-    if (navigator.share) {
-      try {
-        await navigator.share({ title, text: 'Check out this markdown document', url })
-        return
-      } catch (err) {
-        if (err.name !== 'AbortError') console.log('Share failed:', err)
-      }
+    // Preview URL: adds ?mode=preview before the hash
+    const previewUrl = baseUrl + '?mode=preview' + hash
+    // Edit URL: adds ?mode=edit before the hash
+    const editUrl = baseUrl + '?mode=edit' + hash
+
+    previewUrlInput.value = previewUrl
+    editUrlInput.value = editUrl
+
+    shareModal.classList.add('active')
+  })
+
+  closeShare.addEventListener('click', () => {
+    shareModal.classList.remove('active')
+  })
+
+  shareModal.addEventListener('click', (e) => {
+    if (e.target === shareModal) {
+      shareModal.classList.remove('active')
     }
+  })
 
+  async function copyToClipboard(text, button) {
     try {
-      await navigator.clipboard.writeText(url)
-      showButtonFeedback(btnShare, '✓')
+      await navigator.clipboard.writeText(text)
+      button.textContent = 'Copied!'
+      button.classList.add('copied')
+      setTimeout(() => {
+        button.textContent = 'Copy'
+        button.classList.remove('copied')
+      }, 2000)
     } catch (err) {
-      const textarea = document.createElement('textarea')
-      textarea.value = url
-      textarea.style.position = 'fixed'
-      textarea.style.opacity = '0'
-      document.body.appendChild(textarea)
-      textarea.select()
-      try {
-        document.execCommand('copy')
-        showButtonFeedback(btnShare, '✓')
-      } catch (e) {
-        alert('Failed to copy. Please copy manually: ' + url)
-      }
-      document.body.removeChild(textarea)
+      alert('Failed to copy. Please copy manually.')
     }
+  }
+
+  copyPreviewBtn.addEventListener('click', () => {
+    copyToClipboard(previewUrlInput.value, copyPreviewBtn)
+  })
+
+  copyEditBtn.addEventListener('click', () => {
+    copyToClipboard(editUrlInput.value, copyEditBtn)
   })
 
   function showButtonFeedback(btn, text) {
@@ -1854,6 +2021,10 @@ mindmap
   addEventListener('hashchange', load)
 
   async function load() {
+    // Check for mode query parameter
+    const urlParams = new URLSearchParams(window.location.search)
+    const mode = urlParams.get('mode')
+
     try {
       if (location.hash !== '') {
         await set(location.hash)
@@ -1868,6 +2039,18 @@ mindmap
     lastContent = editor.value
     renderMarkdown()
     updateLineNumbers()
+
+    // Apply mode from URL
+    if (mode === 'preview') {
+      setView('preview')
+      // Hide editing UI for clean preview
+      document.querySelector('.toolbar').style.display = 'none'
+      document.querySelector('.sidebar').style.display = 'none'
+      document.querySelector('.status-bar').style.display = 'none'
+      document.querySelector('.container').style.height = '100vh'
+    } else if (mode === 'edit') {
+      setView('edit')
+    }
   }
 
   async function save() {
