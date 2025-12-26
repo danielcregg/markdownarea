@@ -369,7 +369,7 @@
   const btnPreview = document.getElementById('btn-preview')
   const btnShare = document.getElementById('btn-share')
   const formatButtons = document.querySelectorAll('[data-format]')
-  const DEFAULT_LINK_URL = 'URL_HERE'
+  const DEFAULT_LINK_URL = 'https://example.com'
 
   // Configure marked
   marked.setOptions({
@@ -403,11 +403,7 @@
   formatButtons.forEach((button) => {
     button.addEventListener('click', () => {
       const action = formatActions[button.dataset.format]
-      if (action) {
-        action()
-      } else {
-        console.warn('Development warning: unknown format action', button.dataset.format, 'Available actions:', Object.keys(formatActions))
-      }
+      if (action) action()
     })
   })
 
