@@ -1,6 +1,7 @@
-# 📝 Markdown Editor
+# #️⃣ HashMark
+> **The zero-dependency, serverless markdown editor that lives in your URL.**
 
-A powerful, feature-rich markdown editor that runs entirely in your browser with real-time preview, URL-based sharing, and zero server dependencies.
+HashMark is a powerful, feature-rich markdown editor that runs entirely in your browser. It uses the URL hash to store your document, meaning you can share "files" just by sending a link. No database, no accounts, no servers—just you and the client.
 
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://danielcregg.github.io/markdownarea/)
 [![GitHub Pages](https://img.shields.io/badge/hosted-GitHub%20Pages-blue)](https://danielcregg.github.io/markdownarea/)
