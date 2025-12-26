@@ -1,81 +1,238 @@
-# [Markdown Editor](https://danielcregg.github.io/markdownarea/)
+# 📝 Markdown Editor
 
-A _minimalist_ markdown editor that lives entirely in your browser with real-time rendering and URL-based sharing.
+A powerful, feature-rich markdown editor that runs entirely in your browser with real-time preview, URL-based sharing, and zero server dependencies.
 
-**Try it now:** https://danielcregg.github.io/markdownarea/
+[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://danielcregg.github.io/markdownarea/)
+[![GitHub Pages](https://img.shields.io/badge/hosted-GitHub%20Pages-blue)](https://danielcregg.github.io/markdownarea/)
+[![No Backend](https://img.shields.io/badge/backend-none-orange)](https://danielcregg.github.io/markdownarea/)
 
-## Features
-
-- 📝 **Full Markdown Support** - Write with complete GitHub-Flavored Markdown (GFM) syntax
-- 👁️ **Live Preview** - See your markdown rendered in real-time as you type
-- 🔄 **Three View Modes**:
-  - **Edit** - Focus on writing
-  - **Preview** - See the fully rendered document
-  - **Split** - Edit and preview side-by-side
-- 📊 **Mermaid Diagrams** - Render `mermaid` code blocks directly in preview
-- 📤 **Easy Sharing** - One-click share button uses native mobile sharing or copies URL to clipboard
-- 🗜️ **Compression magic** - Your markdown gets compressed with deflate for efficient URL storage
-- 🔗 **URL-based sharing** - Share your rendered documents by copying the URL
-- 🌓 **Dark mode** - Respects your system's color scheme preference
-- 💾 **Auto-save** - Changes are saved automatically (500ms debounce)
-- 📱 **Mobile friendly** - Responsive design works on all devices
-- 🎯 **No backend** - Zero servers, everything runs in your browser
-- 💾 **Dual persistence** - Stored in both localStorage and URL hash
-
-## How to use
-
-1. Open the editor at https://danielcregg.github.io/markdownarea/
-2. Write your markdown in the editor pane
-3. Click **Split** to see live preview alongside your text
-4. Click **Preview** to see only the rendered output
-5. Click the **📤 Share** button to share your document instantly
-   - On mobile: Opens native share sheet for easy sharing via apps
-   - On desktop: Copies the URL to your clipboard automatically
-6. Recipients see the exact same rendered content when they open the link
-
-## Markdown Support
-
-Full support for:
-
-- **Headings** (# H1 through ###### H6)
-- **Emphasis** (*italic*, **bold**, ***bold italic***)
-- **Lists** (ordered and unordered)
-- **Links** and **Images**
-- **Code blocks** with syntax preservation
-- **Inline code** formatting
-- **Blockquotes**
-- **Tables**
-- **Horizontal rules**
-- **Line breaks** (GFM-style)
-
-## Pro tips
-
-- Start your document with `# Title` to set a custom page title
-- Use the **📤 Share** button for instant sharing - no need to manually copy URLs
-- Use **Tab** key in the editor to insert spaces (instead of losing focus)
-- Your preferred view mode (Edit/Split/Preview) is remembered
-- Data lives in both localStorage AND the URL for maximum reliability
-
-## Examples
-
-Create beautiful documents like:
-
-- Technical documentation
-- Blog posts and articles
-- Meeting notes and agendas
-- Project README files
-- Personal journals
-- Code tutorials
-- Quick notes and lists
-
-## Technical Details
-
-- **Markdown Engine**: Marked.js (v11.1.1)
-- **Compression**: Deflate-raw with base64 URL-safe encoding
-- **Styling**: GitHub-inspired markdown rendering
-- **Storage**: CompressionStream API + localStorage fallback
-- **Size**: Single HTML file (~465 lines)
+**🚀 Try it now:** [https://danielcregg.github.io/markdownarea/](https://danielcregg.github.io/markdownarea/)
 
 ---
 
-*Made with ❤️ and JavaScript*
+## ✨ Features
+
+### Editor & Preview
+| Feature | Description |
+|---------|-------------|
+| 📝 **Full Markdown** | Complete GitHub-Flavored Markdown (GFM) support |
+| 👁️ **Live Preview** | Real-time rendering as you type |
+| 🔄 **Three View Modes** | Edit, Split, or Preview modes |
+| 💾 **Auto-Save** | Changes saved automatically with visual indicator |
+| 📊 **Word Count** | Live word and character count in status bar |
+
+### Formatting Toolbar (Sidebar)
+| Button | Function | Shortcut |
+|--------|----------|----------|
+| **B** | Bold text | `Ctrl+B` |
+| *I* | Italic text | `Ctrl+I` |
+| `</>` | Inline code | — |
+| 🔗 | Insert link | `Ctrl+K` |
+| H1/H2/H3 | Headings | — |
+| • / 1. / ☐ | Lists (bullet, numbered, task) | — |
+| 🖼️ | Insert image | — |
+| ▦ | Insert table | — |
+| " | Blockquote | — |
+| ― | Horizontal rule | — |
+| 📊 | **Mermaid diagrams** (8 templates) | — |
+| { } | **Code blocks** (16 languages) | — |
+
+### Diagram Support
+Click the **📊 Diagram** button to insert pre-built templates:
+- 🔀 Flowchart
+- ↔️ Sequence Diagram
+- 📦 Class Diagram
+- 🔄 State Diagram
+- 🗃️ ER Diagram
+- 📅 Gantt Chart
+- 🥧 Pie Chart
+- 🧠 Mind Map
+
+### Code Block Support
+Click the **{ } Code** button to insert syntax-highlighted blocks:
+- JavaScript, TypeScript, Python, Java
+- C, C++, C#, Go, Rust
+- HTML, CSS, SQL, Bash, JSON
+- Ruby, PHP
+
+### Advanced Rendering
+| Feature | Example |
+|---------|---------|
+| **Math Equations** | `$E = mc^2$` or `$$\sum_{i=1}^n x_i$$` |
+| **Syntax Highlighting** | Automatic for 180+ languages |
+| **Emoji Shortcodes** | `:smile:` → 😄, `:rocket:` → 🚀 |
+| **Mermaid Diagrams** | Lazy-loaded for performance |
+
+### Toolbar Actions
+| Button | Function |
+|--------|----------|
+| ↶ / ↷ | Undo / Redo (`Ctrl+Z` / `Ctrl+Y`) |
+| ☀️ 🌙 📜 | Theme toggle (Light / Dark / Sepia) |
+| 📄 New | Open fresh document in new tab |
+| 💾 | Download as `.md` file |
+| 📋 | Copy rendered HTML |
+| 🖨️ | Print / Export to PDF |
+| 📱 | Generate QR code for sharing |
+| 📤 | Share URL (copy to clipboard) |
+| ⛶ | Fullscreen mode (`F11`) |
+
+### Sharing & Collaboration
+- 🔗 **URL-based sharing** — Document encoded in URL hash
+- 🗜️ **Smart compression** — Deflate compression for compact URLs
+- 📱 **QR Code generation** — Scan to share on mobile
+- 📤 **Native sharing** — Uses mobile share sheet when available
+- 💾 **Dual persistence** — Stored in localStorage AND URL
+
+### Theming
+Three beautiful themes that persist across sessions:
+- ☀️ **Light** — Clean, bright interface
+- 🌙 **Dark** — Easy on the eyes
+- 📜 **Sepia** — Warm, paper-like feel
+
+---
+
+## 🚀 Quick Start
+
+1. **Open** the editor at [danielcregg.github.io/markdownarea](https://danielcregg.github.io/markdownarea/)
+2. **Write** your markdown in the editor pane
+3. **Preview** using Split or Preview mode
+4. **Share** by clicking 📤 Share or 📱 QR Code
+5. **Export** as `.md`, HTML, or PDF
+
+---
+
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+B` | Bold |
+| `Ctrl+I` | Italic |
+| `Ctrl+K` | Insert link |
+| `Ctrl+S` | Save |
+| `Ctrl+Z` | Undo |
+| `Ctrl+Y` / `Ctrl+Shift+Z` | Redo |
+| `Tab` | Insert 2 spaces |
+| `F11` | Toggle fullscreen |
+| `Escape` | Exit fullscreen |
+
+---
+
+## 📖 Markdown Support
+
+### Text Formatting
+```markdown
+**Bold**, *italic*, ***bold italic***
+~~Strikethrough~~, `inline code`
+```
+
+### Headings
+```markdown
+# H1  ## H2  ### H3  #### H4  ##### H5  ###### H6
+```
+
+### Lists
+```markdown
+- Bullet item
+1. Numbered item
+- [ ] Task item
+- [x] Completed task
+```
+
+### Links & Images
+```markdown
+[Link text](https://example.com)
+![Alt text](image.png)
+```
+
+### Code Blocks
+````markdown
+```javascript
+console.log('Hello, World!');
+```
+````
+
+### Tables
+```markdown
+| Header 1 | Header 2 |
+|----------|----------|
+| Cell 1   | Cell 2   |
+```
+
+### Math (KaTeX)
+```markdown
+Inline: $E = mc^2$
+Block: $$\int_0^\infty e^{-x^2} dx = \frac{\sqrt{\pi}}{2}$$
+```
+
+### Mermaid Diagrams
+````markdown
+```mermaid
+graph TD
+    A[Start] --> B{Decision}
+    B -->|Yes| C[Action]
+    B -->|No| D[End]
+```
+````
+
+### Emoji Shortcodes
+```markdown
+:smile: :rocket: :fire: :thumbsup: :heart:
+```
+
+---
+
+## 🛠️ Technical Details
+
+| Component | Technology |
+|-----------|------------|
+| Markdown Parser | [Marked.js](https://marked.js.org/) v11.1.1 |
+| Syntax Highlighting | [Highlight.js](https://highlightjs.org/) v11.9.0 |
+| Math Rendering | [KaTeX](https://katex.org/) v0.16.9 |
+| Diagrams | [Mermaid](https://mermaid.js.org/) v10 (lazy-loaded) |
+| QR Codes | [QRious](https://github.com/neocotic/qrious) v4.0.2 |
+| Compression | Native CompressionStream API (deflate-raw) |
+| Storage | localStorage + URL hash |
+| Hosting | GitHub Pages (static) |
+
+---
+
+## 💡 Pro Tips
+
+- Start your document with `# Title` to set the browser tab title
+- Use **Split** mode for the best editing experience
+- Your theme and view mode preferences are remembered
+- Click outside modals to close them
+- QR codes work offline once generated
+- Long documents? The URL still works—compression is efficient!
+
+---
+
+## 📋 Use Cases
+
+- 📚 Technical documentation
+- 📰 Blog posts and articles
+- 📋 Meeting notes and agendas
+- 📦 Project README files
+- 📓 Personal journals
+- 💻 Code tutorials
+- ✅ Quick notes and checklists
+- 📊 Diagrams and flowcharts
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! This is a single-file application—all code lives in `index.html`.
+
+---
+
+## 📄 License
+
+MIT License — feel free to use, modify, and share.
+
+---
+
+<p align="center">
+  Made with ❤️ and JavaScript<br>
+  <a href="https://danielcregg.github.io/markdownarea/">Try it now →</a>
+</p>
